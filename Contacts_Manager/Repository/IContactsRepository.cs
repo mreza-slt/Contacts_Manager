@@ -13,8 +13,8 @@ namespace Contacts_Manager
         DataTable SelectAll();
         DataTable SelectRow(int contactId);
 
-        bool Inser(string name, string family, string mobile, string email, int age, string address);
-        bool Update(int contactId,string name, string family, string mobile, string email, int age, string address);
+        bool Insert(string name, string family, int age, string email, string mobile, string address);
+        bool Update(int contactId, string name, string family, int age, string email, string mobile, string address);
         bool Delete(int contactId);
     }
 }
