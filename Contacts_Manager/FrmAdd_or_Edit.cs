@@ -14,6 +14,7 @@ namespace Contacts_Manager
     {
 
         IContactsRepository repository;
+        public int contactId = 0;
         public FrmAdd_or_Edit()
         {
             InitializeComponent();
@@ -22,7 +23,23 @@ namespace Contacts_Manager
 
         private void FrmAdd_or_Edit_Load(object sender, EventArgs e)
         {
-            this.Text = "افزودن شخص جدید";
+            if(contactId == 0)
+            {
+                this.Text = "افزودن شخص جدید";
+              
+            }
+            else
+            {
+                this.Text = "ویرایش";
+                DataTable dt = repository.SelectRow(contactId);
+                txtName.Text = dt.Rows[0][1].ToString();
+                txtFamily.Text = dt.Rows[0][2].ToString();
+                txtAge.Text = dt.Rows[0][3].ToString();
+                txtEmail.Text = dt.Rows[0][4].ToString();
+                txtMobile.Text = dt.Rows[0][5].ToString();
+                txtAddress.Text = dt.Rows[0][6].ToString();
+                btnSubmit.Text = "ویرایش";
+            }
         }
 
         bool ValidateInput()
@@ -61,9 +78,18 @@ namespace Contacts_Manager
         {
             if (ValidateInput())
             {
-               bool isSuccess =repository.Insert(txtName.Text, txtFamily.Text,(int)txtAge.Value, txtEmail.Text,txtMobile.Text,  txtAddress.Text);
+               bool isSuccess;
 
-                if (isSuccess==true)
+                if (contactId == 0)
+                {
+                   isSuccess = repository.Insert(txtName.Text, txtFamily.Text, (int)txtAge.Value, txtEmail.Text, txtMobile.Text, txtAddress.Text);
+                }
+                else
+                {
+                    isSuccess = repository.Update(contactId,txtName.Text, txtFamily.Text, (int)txtAge.Value, txtEmail.Text, txtMobile.Text, txtAddress.Text);
+                }
+
+                if (isSuccess==true )
                 {
                     MessageBox.Show("اطلاعات با موفقیت ثبت شد", "موفق", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     DialogResult=DialogResult.OK;
@@ -75,6 +101,9 @@ namespace Contacts_Manager
             }
         }
 
-        
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

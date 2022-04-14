@@ -12,7 +12,7 @@ namespace Contacts_Manager
 
         DataTable SelectAll();
         DataTable SelectRow(int contactId);
-
+        DataTable Search(string parmeter);
         bool Insert(string name, string family, int age, string email, string mobile, string address);
         bool Update(int contactId, string name, string family, int age, string email, string mobile, string address);
         bool Delete(int contactId);
