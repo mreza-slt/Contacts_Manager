@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,31 +14,31 @@ namespace Contacts_Manager
     public partial class FrmAdd_or_Edit : Form
     {
 
-        IContactsRepository repository;
+        Contact_dbEntities db = new Contact_dbEntities();
+
         public int contactId = 0;
         public FrmAdd_or_Edit()
         {
             InitializeComponent();
-            repository = new ContactsRepository();
         }
 
         private void FrmAdd_or_Edit_Load(object sender, EventArgs e)
         {
-            if(contactId == 0)
+            if (contactId == 0)
             {
                 this.Text = "افزودن شخص جدید";
-              
+
             }
             else
             {
                 this.Text = "ویرایش";
-                DataTable dt = repository.SelectRow(contactId);
-                txtName.Text = dt.Rows[0][1].ToString();
-                txtFamily.Text = dt.Rows[0][2].ToString();
-                txtAge.Text = dt.Rows[0][3].ToString();
-                txtEmail.Text = dt.Rows[0][4].ToString();
-                txtMobile.Text = dt.Rows[0][5].ToString();
-                txtAddress.Text = dt.Rows[0][6].ToString();
+                My_Contact contact = db.My_Contact.Find(contactId);
+                txtName.Text = contact.Name;
+                txtFamily.Text = contact.Family;
+                txtAge.Text = contact.Age.ToString();
+                txtEmail.Text = contact.Email;
+                txtMobile.Text = contact.Mobile;
+                txtAddress.Text = contact.Address;
                 btnSubmit.Text = "ویرایش";
             }
         }
@@ -47,7 +48,7 @@ namespace Contacts_Manager
 
             if (txtName.Text == "")
             {
-                MessageBox.Show("لطفا نام را وارد کنید","هشدار",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("لطفا نام را وارد کنید", "هشدار", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
             if (txtFamily.Text == "")
@@ -78,26 +79,36 @@ namespace Contacts_Manager
         {
             if (ValidateInput())
             {
-               bool isSuccess;
+
+
+
 
                 if (contactId == 0)
                 {
-                   isSuccess = repository.Insert(txtName.Text, txtFamily.Text, (int)txtAge.Value, txtEmail.Text, txtMobile.Text, txtAddress.Text);
+                    My_Contact contact = new My_Contact();
+                    contact.Name = txtName.Text;
+                    contact.Family = txtFamily.Text;
+                    contact.Age = (int)txtAge.Value;
+                    contact.Mobile = txtMobile.Text;
+                    contact.Email = txtEmail.Text;
+                    contact.Address = txtAddress.Text;
+                    db.My_Contact.Add(contact);
                 }
                 else
                 {
-                    isSuccess = repository.Update(contactId,txtName.Text, txtFamily.Text, (int)txtAge.Value, txtEmail.Text, txtMobile.Text, txtAddress.Text);
+                    var contact = db.My_Contact.Find(contactId);
+                    contact.Name = txtName.Text;
+                    contact.Family = txtFamily.Text;
+                    contact.Age = (int)txtAge.Value;
+                    contact.Mobile = txtMobile.Text;
+                    contact.Email = txtEmail.Text;
+                    contact.Address = txtAddress.Text;
                 }
+                db.SaveChanges();
 
-                if (isSuccess==true )
-                {
-                    MessageBox.Show("اطلاعات با موفقیت ثبت شد", "موفق", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    DialogResult=DialogResult.OK;
-                }
-                else
-                {
-                    MessageBox.Show("اطلاعات ثبت نشد", "خطا", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                MessageBox.Show("اطلاعات با موفقیت ثبت شد", "موفق", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DialogResult = DialogResult.OK;
+
             }
         }
 
